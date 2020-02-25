@@ -1,0 +1,29 @@
+ALTER PROC [dbo].[Locations_Delete_ById]
+							@Id int
+              
+ as
+
+/*
+
+	DECLARE @Id int = 2
+
+	SELECT *
+	FROM dbo.Locations
+	WHERE Id = @Id
+
+	EXECUTE [dbo].[Locations_Delete_ById]
+					@Id
+
+	SELECT *
+	FROM dbo.Locations
+	WHERE Id = @Id
+
+*/
+
+BEGIN
+
+	DELETE 
+	FROM [dbo].[Locations]
+  WHERE Id = @Id
+
+END
