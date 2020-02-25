@@ -1,0 +1,34 @@
+ALTER proc [dbo].[Listings_SelectIds_ByGeo]
+        @Latitude float
+        , @Longitude float
+        , @Radius int
+        
+as
+
+/*
+
+  DECLARE @Latitude float = 33.6846
+        , @Longitude float = 117.8265
+        , @Radius int = 100
+
+	EXECUTE dbo.Listings_SelectIds_ByGeo
+          @Latitude
+        , @Longitude
+        , @Radius
+        
+*/
+
+BEGIN
+
+	DECLARE @MetersPerMile float = 1609.344
+			    , @SRID int = 4326 --spatial reference id, model for earth.
+
+	DECLARE @LocationStart GEOGRAPHY = GEOGRAPHY :: Point(@Latitude, @Longitude, @SRID)
+
+
+	SELECT Li.[Id]
+	  FROM [dbo].[Listings] as Li
+		  JOIN dbo.Locations as Lo
+			  on Li.LocationId = Lo.Id
+	  WHERE @LocationStart.STDistance(GEOGRAPHY::Point(Lo.Latitude, Lo.Longitude, @SRID)) / @MetersPerMile <= @Radius;
+END
