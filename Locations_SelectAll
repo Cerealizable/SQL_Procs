@@ -1,0 +1,65 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+ALTER PROC [dbo].[Locations_SelectAll]
+                          @PageIndex int,
+                          @PageSize int
+
+
+as
+
+
+/*
+
+	DECLARE 
+          @PageIndex int = 0,
+			    @PageSize int = 5
+
+	EXECUTE dbo.Locations_SelectAll
+					@PageIndex,
+					@PageSize
+
+	Select *
+	From dbo.Locations
+
+
+
+*/
+
+
+BEGIN
+
+	SELECT 
+    Lo.[Id]
+		,Lo.[LocationTypeId]
+		,Lt.[Name]
+		,Lo.[LineOne]
+		,Lo.[LineTwo]
+		,Lo.[City]
+		,Lo.[Zip]
+		,Lo.[StateId]
+		,S.[Name]
+		,Lo.[Latitude]
+		,Lo.[Longitude]
+		,Lo.[DateCreated]
+		,Lo.[DateModified]
+		,Lo.[CreatedBy]
+		,Lo.[ModifiedBy]
+		,TotalCount = count(1) over()
+
+
+	FROM [dbo].[Locations] as Lo
+		JOIN dbo.States as S
+			on Lo.StateId = S.Id
+		JOIN dbo.LocationTypes as Lt
+			on Lo.LocationTypeId = Lt.Id
+
+
+	ORDER BY Lo.Id
+	OFFSET @pageSize * (@pageIndex) ROWS 
+	Fetch Next @pageSize Rows ONLY
+
+END 
