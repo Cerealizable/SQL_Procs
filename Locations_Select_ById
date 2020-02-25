@@ -1,0 +1,40 @@
+ALTER PROC [dbo].[Locations_Select_ById_V2]
+			@Id int
+			
+as
+
+/*
+
+DECLARE @Id int = 2
+
+EXECUTE dbo.Locations_Select_ById
+	@Id
+
+*/
+
+BEGIN
+
+SELECT Lo.[Id]
+	,Lo.[LocationTypeId]
+	,Lt.[Name]
+	,Lo.[LineOne]
+	,Lo.[LineTwo]
+	,Lo.[City]
+	,Lo.[Zip]
+	,Lo.[StateId]
+	,S.[Name]
+	,Lo.[Latitude]
+	,Lo.[Longitude]
+	,Lo.[DateCreated]
+	,Lo.[DateModified]
+	,Lo.[CreatedBy]
+	,Lo.[ModifiedBy]
+
+  FROM [dbo].[Locations] as Lo
+	JOIN dbo.States as S
+		on Lo.StateId = S.Id
+	JOIN dbo.LocationTypes as Lt
+		on Lo.LocationTypeId = Lt.Id
+	WHERE Lo.Id = @Id	
+
+END
