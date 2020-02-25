@@ -1,0 +1,54 @@
+ALTER proc [dbo].[Locations_Select_ByGeo] 
+							@Latitude	float
+							,@Longitude	float
+							,@Radius	int
+
+
+/*
+	
+
+	DECLARE 
+		@Latitude float = 33.6539221
+		,@Longitude float = -117.7472937
+		,@Radius int = 10
+
+	EXECUTE [dbo].[Locations_Select_ByGeo]
+			@Latitude
+			,@Longitude
+			,@Radius
+
+
+*/
+
+as
+
+BEGIN
+		
+
+	DECLARE @MetersPerMile float = 1609.344
+			,@SRID	int =	4326
+
+	DECLARE @LocationStart GEOGRAPHY = GEOGRAPHY::Point(@Latitude, @Longitude, @SRID) 
+	
+
+	SELECT
+		[LocationTypeId]
+		,[LineOne]
+		,[LineTwo]
+		,[City]
+		,[Zip]
+		,[StateId]
+		,[Latitude]
+		,[Longitude]
+		,[DateCreated]
+		,[DateModified]
+		,[CreatedBy]
+		,[ModifiedBy]
+		,[GeoPoint]
+
+	FROM [dbo].[Locations]
+	WHERE @LocationStart.STDistance(GeoPoint)/ @MetersPerMile <= @Radius; --miles
+			
+
+
+END;
