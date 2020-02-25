@@ -1,0 +1,86 @@
+ALTER PROC [dbo].[Locations_Insert]
+		  @LocationTypeId int
+		, @LineOne nvarchar(255)
+		, @LineTwo nvarchar(255)
+		, @City nvarchar(255)
+		, @Zip nvarchar(50)
+		, @StateId int
+		, @Latitude float
+		, @Longitude float
+		, @CreatedBy int
+		, @ModifiedBy int
+		, @Id int OUTPUT
+    
+as
+
+/*
+
+		DECLARE @Id int;
+
+		DECLARE @LocationTypeId int = 5
+          , @LineOne nvarchar(255) = '28 Hayes Ave'
+          , @LineTwo nvarchar(255) = ''
+          , @City nvarchar(255) = 'Beverly'
+          , @Zip nvarchar(50) = 01915
+          , @StateId int = 37
+          , @Latitude float = 42.551543
+          , @Longitude float = -70.907283
+          , @CreatedBy int = 15
+          , @ModifiedBy int = 15
+			
+
+		EXECUTE dbo.Locations_Insert
+          @LocationTypeId
+          , @LineOne 
+          , @LineTwo 
+          , @City 
+          , @Zip 
+          , @StateId 
+          , @Latitude 
+          , @Longitude 
+          , @CreatedBy 
+          , @ModifiedBy
+          , @Id
+
+		SELECT * FROM dbo.Locations;
+
+*/
+
+BEGIN
+
+    DECLARE @DateModified datetime2(7) = GETUTCDATE()
+        ,@SRID int = 4326
+
+    DECLARE @GeoPoint GEOGRAPHY = GEOGRAPHY::Point(@Latitude, @Longitude, @SRID)
+
+    INSERT INTO [dbo].[Locations]
+              ([LocationTypeId]
+               , [LineOne]
+               , [LineTwo]
+               , [City]
+               , [Zip]
+               , [StateId]
+               , [Latitude]
+               , [Longitude]
+               , [DateModified]
+               , [CreatedBy]
+               , [ModifiedBy]
+               , [GeoPoint]
+
+        ) VALUES (
+              @LocationTypeId
+              , @LineOne 
+              , @LineTwo 
+              , @City 
+              , @Zip 
+              , @StateId 
+              , @Latitude 
+              , @Longitude 
+              , @DateModified
+              , @CreatedBy 
+              , @ModifiedBy
+              , @GeoPoint)
+
+    SET @Id = SCOPE_IDENTITY()
+
+END
