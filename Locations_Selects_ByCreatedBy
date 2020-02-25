@@ -1,0 +1,48 @@
+ALTER PROC [dbo].[Locations_Select_ByCreatedBy]
+							 @CreatedBy int,
+							 @PageIndex int,
+							 @PageSize int
+
+
+as
+
+/*
+
+		DECLARE @CreatedBy int = 15,
+				@PageIndex int = 0,
+				@PageSize int = 5
+
+		EXECUTE dbo.Locations_Select_ByCreatedBy
+				@CreatedBy,
+				@PageIndex,
+				@PageSize
+
+
+*/
+
+BEGIN
+		DECLARE @offSet int = @PageIndex * @PageSize
+		
+
+		SELECT [Id]
+			  , [LocationTypeId]
+			  , [LineOne]
+			  , [LineTwo]
+			  , [City]
+			  , [Zip]
+			  , [StateId]
+			  , [Latitude]
+			  , [Longitude]
+			  , [DateCreated]
+			  , [DateModified]
+			  , [CreatedBy]
+			  , [ModifiedBy]
+			  , TotalCount = count(1) over()
+		
+		  FROM [dbo].[Locations]
+		  WHERE CreatedBy = @CreatedBy
+		  ORDER By CreatedBy
+		  OFFSET @offSet Rows
+		  Fetch Next @pageSize Rows ONLY
+
+END
