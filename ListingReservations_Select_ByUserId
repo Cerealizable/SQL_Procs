@@ -1,0 +1,83 @@
+ALTER PROCEDURE [dbo].[ListingReservations_Select_ByUserId] 
+											@PageIndex int 
+											, @PageSize  int 
+											, @UserId    int
+
+AS
+
+/*
+
+	DECLARE 
+			@PageIndex int = 0
+			, @PageSize int =10
+			, @UserId int = 10
+	
+	EXECUTE [dbo].[ListingReservations_Select_ByUserId] 
+			@PageIndex
+			, @PageSize
+			, @UserId
+
+*/
+
+    BEGIN
+       
+	   DECLARE @totalCount INT=
+        (
+            SELECT COUNT(Id)
+            FROM [dbo].[ListingReservations]
+				WHERE UserId = @UserId
+        );
+
+        SELECT Lr.[Id] 
+               , Lr.[ListingId]
+               , Li.[InternalName]
+               , Li.[Title]
+               , Li.[ShortDescription]
+               , Li.[Description]
+               , Li.[BedRooms]
+               , Li.[Baths]
+               , Li.[HousingTypeId]
+               , Ht.[Name]
+               , Li.[AccessTypeId]
+               , AcT.[Name]
+               , AcT.[Description]
+               , Li.[GuestCapacity]
+               , Li.[CostPerNight]
+               , Li.[CostPerWeek]
+               , Li.CheckInTime
+               , Li.CheckOutTime
+               , Li.DaysAvailable
+               , Li.LocationId
+               , Li.HasVerifiedOwnership
+               , Li.IsActive
+               , Li.CreatedBy
+               , Li.DateCreated
+               , Li.DateModified
+               , Lr.[DateCheckIn] 
+               , Lr.[DateCheckOut] 
+               , Lr.[ChargeId]
+               , Lr.[StatusId] 
+			         , Lr.[UserId]
+			         ( Select List.FileUrl,
+                  List.ImageType
+                    FROM dbo.ListingImages as List
+                    JOIN dbo.Listings as L on List.ListingId = L.Id
+                    WHERE List.ListingId = Li.Id FOR JSON AUTO 
+		            ) AS IMAGES
+                , @totalCount
+                FROM [dbo].[ListingReservations] as Lr
+                  JOIN dbo.Listings as Li
+                    on Lr.ListingId = Li.Id
+                  JOIN dbo.HousingTypes as Ht
+                    on Li.HousingTypeId = Ht.Id
+                  JOIN dbo.AccessTypes as AcT
+                    on Li.AccessTypeId = AcT.Id
+                  JOIN dbo.Locations as Lo 
+                    on Li.LocationId = Lo.Id
+
+              WHERE UserId = @UserId
+                ORDER BY DateCheckIn 
+                OFFSET @PageSize * (@PageIndex) ROWS 
+		          FETCH NEXT @PageSize ROWS ONLY;
+
+    END
