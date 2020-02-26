@@ -57,8 +57,8 @@ AS
                , Lr.[DateCheckOut] 
                , Lr.[ChargeId]
                , Lr.[StatusId] 
-			         , Lr.[UserId]
-			         ( Select List.FileUrl,
+	       , Lr.[UserId]
+		 ( Select List.FileUrl,
                   List.ImageType
                     FROM dbo.ListingImages as List
                     JOIN dbo.Listings as L on List.ListingId = L.Id
